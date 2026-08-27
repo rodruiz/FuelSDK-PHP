@@ -1,4 +1,5 @@
 <?php
+
 namespace FuelSdk\Test;
 
 use FuelSdk\ET_Client;
@@ -11,18 +12,19 @@ use PHPUnit\Framework\TestCase;
 final class ContentAreaTest extends TestCase
 {
     private $client;
-    
 
-    function __construct()
+
+    protected function setUp(): void
     {
+        requireMarketingCloudConfig($this);
         $this->client = new ET_Client(true);
     }
 
     public function testCanCreateContentArea()
     {
         $result = $this->createContentArea();
-        $this->assertEquals($result->status, TRUE);
-        
+        $this->assertEquals($result->status, true);
+
         return $result->results[0];
     }
 
@@ -33,23 +35,23 @@ final class ContentAreaTest extends TestCase
     {
         $getCA = $this->getContentArea($contentarea->NewID);
         //make sure the get was successful
-        $this->assertEquals($getCA->status, TRUE);
+        $this->assertEquals($getCA->status, true);
         //compare the content area name
-        $this->assertEquals($getCA->results[0]->Name == $contentarea->Object->Name, TRUE);
+        $this->assertEquals($getCA->results[0]->Name == $contentarea->Object->Name, true);
         return $getCA->results[0];
     }
 
-     /**
+    /**
     * @depends testCanGetContentArea
     */
     public function testCanUpdateContentArea($contentarea)
     {
-        $newContent = "Updated Content";
-        $updatedCA = $this->updateContentArea($contentarea,$newContent);
+        $newContent = 'Updated Content';
+        $updatedCA = $this->updateContentArea($contentarea, $newContent);
 
         $getCA = $this->getContentArea($contentarea->ID);
         var_dump($getCA);
-        $this->assertEquals($getCA->results[0]->Content == $newContent, TRUE);
+        $this->assertEquals($getCA->results[0]->Content == $newContent, true);
         return $contentarea;
     }
 
@@ -59,7 +61,7 @@ final class ContentAreaTest extends TestCase
     public function testCanDeleteContentArea($contentarea)
     {
         $result = $this->deleteContentArea($contentarea);
-        $this->assertEquals($result->status, TRUE);
+        $this->assertEquals($result->status, true);
 
     }
 
@@ -67,7 +69,7 @@ final class ContentAreaTest extends TestCase
     {
         $contentarea = new ET_ContentArea();
         $contentarea->authStub = $this->client;
-        $contentarea->props = array("CustomerKey" => "ExampleContentArea".uniqid(), "Name"=>"ExampleContentArea".uniqid(), "Content"=> "Original Content");
+        $contentarea->props = ['CustomerKey' => 'ExampleContentArea' . uniqid(), 'Name' => 'ExampleContentArea' . uniqid(), 'Content' => 'Original Content'];
         return $contentarea->post();
 
     }
@@ -76,17 +78,17 @@ final class ContentAreaTest extends TestCase
     {
         $contentarea = new ET_ContentArea();
         $contentarea->authStub = $this->client;
-        $contentarea->filter= array("Property"=>"ID", "SimpleOperator"=>"equals","Value"=>$contentAreaId);
+        $contentarea->filter = ['Property' => 'ID', 'SimpleOperator' => 'equals','Value' => $contentAreaId];
 
         return $contentarea->get();
     }
 
-   
-    public function updateContentArea($contarea,$updatedContent)
+
+    public function updateContentArea($contarea, $updatedContent)
     {
         $contentarea = new ET_ContentArea();
         $contentarea->authStub = $this->client;
-        $contentarea->props = array("ID" => $contarea->ID, "Content"=> $updatedContent);
+        $contentarea->props = ['ID' => $contarea->ID, 'Content' => $updatedContent];
 
         return $contentarea->patch();
     }
@@ -95,7 +97,7 @@ final class ContentAreaTest extends TestCase
     {
         $contentarea = new ET_ContentArea();
         $contentarea->authStub = $this->client;
-        $contentarea->props = array("ID" => $contarea->ID);
+        $contentarea->props = ['ID' => $contarea->ID];
 
         return $contentarea->delete();
     }
@@ -103,5 +105,3 @@ final class ContentAreaTest extends TestCase
 
 
 }
-
-?>

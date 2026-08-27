@@ -12,6 +12,9 @@ objsamples/sample-testing.php
 /tests/ImportListTest.php
 .vscode
 phpunit-*.phar
+.phpunit.cache/
+tests/.phpunit.result.cache
+.php-cs-fixer.cache
 composer.phar
 .idea
 .cache

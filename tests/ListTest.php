@@ -1,4 +1,5 @@
 <?php
+
 namespace FuelSdk\Test;
 
 use FuelSdk\ET_Client;
@@ -11,18 +12,19 @@ use PHPUnit\Framework\TestCase;
 final class ListTest extends TestCase
 {
     private $client;
-    
 
-    function __construct()
+
+    protected function setUp(): void
     {
+        requireMarketingCloudConfig($this);
         $this->client = new ET_Client(true);
     }
 
     public function testCanCreateList()
     {
         $result = $this->createList();
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "Created List.", TRUE);
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'Created List.', true);
         return $result->results[0];
     }
 
@@ -33,24 +35,24 @@ final class ListTest extends TestCase
     {
         $getlist = $this->getList($list->NewID);
         //make sure the get was successful
-        $this->assertEquals($getlist->status, TRUE);
+        $this->assertEquals($getlist->status, true);
         //compare the Name of the list
-        $this->assertEquals($getlist->results[0]->ListName == $list->Object->ListName, TRUE);
+        $this->assertEquals($getlist->results[0]->ListName == $list->Object->ListName, true);
         return $getlist->results[0];
     }
 
-     /**
+    /**
     * @depends testCanGetList
     */
     public function testCanUpdateList($list)
     {
-        $newName = "Updated List Name";
-        $updatedList = $this->updateList($list,$newName);
-        $this->assertEquals($updatedList->status, TRUE);
-        $this->assertEquals($updatedList->results[0]->StatusMessage == "Updated List.", TRUE);
+        $newName = 'Updated List Name';
+        $updatedList = $this->updateList($list, $newName);
+        $this->assertEquals($updatedList->status, true);
+        $this->assertEquals($updatedList->results[0]->StatusMessage == 'Updated List.', true);
         $getlist = $this->getList($list->ID);
 
-        $this->assertEquals($getlist->results[0]->ListName == $newName, TRUE);
+        $this->assertEquals($getlist->results[0]->ListName == $newName, true);
         return $list;
     }
 
@@ -60,35 +62,35 @@ final class ListTest extends TestCase
     public function testCanDeleteList($list)
     {
         $result = $this->deleteList($list);
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "List deleted", TRUE);
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'List deleted', true);
 
     }
 
     public function testCanUpsertList()
     {
         $list = new ET_List();
-        $list->props = array("ListName" => "UpsertedPHPSDKList".uniqid(), "Description" => "SDK Created List".uniqid());
+        $list->props = ['ListName' => 'UpsertedPHPSDKList' . uniqid(), 'Description' => 'SDK Created List' . uniqid()];
         //call upsert to create a new list.
         $result = $this->upsertList($list);
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "Updated List.", TRUE);
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'Updated List.', true);
 
         //try to get the list we created above
         $getlist = $this->getList($result->results[0]->Object->ID);
         //make sure the get was successful
-        $this->assertEquals($getlist->status, TRUE);
+        $this->assertEquals($getlist->status, true);
         //call the upsert again ... but this time we are going to update the existing one by passing ID field populated
-        $list->props = array("ID" => $getlist->results[0]->ID, "ListName" => "UpsertedPHPSDKList".uniqid(), "Description" => "SDK Created List".uniqid());
+        $list->props = ['ID' => $getlist->results[0]->ID, 'ListName' => 'UpsertedPHPSDKList' . uniqid(), 'Description' => 'SDK Created List' . uniqid()];
         $result = $this->upsertList($list);
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "Updated List.", TRUE);
-        
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'Updated List.', true);
+
         //delete the lsit
         $result = $this->deleteList($getlist->results[0]);
 
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "List deleted", TRUE);
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'List deleted', true);
 
 
     }
@@ -98,7 +100,7 @@ final class ListTest extends TestCase
         $list = new ET_List();
         $list->authStub = $this->client;
 
-        $list->props = array("ListName" => "PHPSDKList".uniqid(), "Description" => "SDK Created List".uniqid());
+        $list->props = ['ListName' => 'PHPSDKList' . uniqid(), 'Description' => 'SDK Created List' . uniqid()];
 
         return $list->post();
 
@@ -116,17 +118,17 @@ final class ListTest extends TestCase
     {
         $list = new ET_List();
         $list->authStub = $this->client;
-        $list->filter= array("Property"=>"ID", "SimpleOperator"=>"equals","Value"=>$listId);
+        $list->filter = ['Property' => 'ID', 'SimpleOperator' => 'equals','Value' => $listId];
         return $list->get();
     }
 
     public function updateList($getlist, $newName)
     {
-        
+
         $list = new ET_List();
         $list->authStub = $this->client;
-        $list->props["ID"] = $getlist->ID;
-        $list->props["ListName"] = $newName;
+        $list->props['ID'] = $getlist->ID;
+        $list->props['ListName'] = $newName;
 
         return $list->patch();
     }
@@ -135,11 +137,9 @@ final class ListTest extends TestCase
     {
         $list = new ET_List();
         $list->authStub = $this->client;
-        $list->props["ID"] = $getlist->ID;
+        $list->props['ID'] = $getlist->ID;
 
         return $list->delete();
     }
 
 }
-
-?>

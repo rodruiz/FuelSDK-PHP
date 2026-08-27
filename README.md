@@ -1,12 +1,40 @@
-FuelSDK-PHP
-============
-
 Salesforce Marketing Cloud Fuel SDK for PHP
+============================================
 
-> Salesforce Marketing Cloud Fuel SDK for PHP is free to use but are not official Salesforce Marketing Cloud products and should be considered community projects. This SDK is not officially tested or documented. For help on any Salesforce Marketing Cloud Fuel SDK for PHP, please consult the Salesforce message boards or the issues section of this repository. Salesforce Marketing Cloud support is not available for this SDK.
+Community-maintained PHP SDK for Salesforce Marketing Cloud.
+
+> **Community fork:** This repository is maintained independently by Rod Ruiz. It is based on Salesforce's archived [`salesforce-marketingcloud/FuelSDK-PHP`](https://github.com/salesforce-marketingcloud/FuelSDK-PHP) project and is not an official Salesforce product. Salesforce does not provide support for this package; please use this repository's issue tracker for bug reports and support requests.
 
 ## Overview ##
-The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
+The Fuel SDK for PHP provides access to Salesforce Marketing Cloud's Fuel API family, including REST and SOAP APIs. These APIs expose Salesforce Marketing Cloud (previously called ExactTarget) functionality through familiar PHP data structures.
+
+## PHP 8 branch ##
+
+The `php8` branch modernizes the archived `salesforce-mc/fuel-sdk-php` package while preserving its Composer package name, `FuelSdk` namespace, and public SDK API wherever possible. It is distributed directly from this GitHub fork as the Composer development version `dev-php8`; it is not published as a separate Packagist package.
+
+Add the fork as a VCS repository and require its branch:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rodruiz/FuelSDK-PHP"
+        }
+    ],
+    "require": {
+        "salesforce-mc/fuel-sdk-php": "dev-php8"
+    }
+}
+```
+
+Then install or update it with:
+
+```bash
+composer update salesforce-mc/fuel-sdk-php
+```
+
+The PHP 8 branch requires PHP 8.1 or later. Development and test execution use PHPUnit 12 and therefore require PHP 8.3 or later. Commit `composer.lock` in applications so deployments use a reviewed revision of the development branch.
 
 ## New Features in Version 1.4.0 ##
 
@@ -97,33 +125,112 @@ In Addition to the OAuth2 feature added as part of Version 1.3.0, We have now ad
 * Added support for your tenant’s endpoints - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm)
 
 ## Requirements ##
-PHP Version >=5.6.24
+
+PHP 8.1 or later, including PHP 8.4.
 
 Extensions:
+
 - openssl
 - SOAP
 - curl
 
 ## API Documentation ##
 
-http://salesforce-marketingcloud.github.io/FuelSDK-PHP/index.html
+[Legacy API documentation](https://salesforce-marketingcloud.github.io/FuelSDK-PHP/index.html) is available from the original project. It may not describe changes made in this maintained fork.
 
 ## Installation ##
 
-### Manual Installation
-After downloading the project, rename the config.php.template file to config.php. Most importantly, you also need to download all dependencies manually and include accordingly. That's why we highly encourage to get it from composer.
+Install this fork directly from its `php8` branch:
 
-### Composer
-Add a dependency to composer require salesforce-mc/fuel-sdk-php to the require section of your project's composer.json configuration file, and update your application.
+```bash
+composer config repositories.fuelsdk-php8 vcs https://github.com/rodruiz/FuelSDK-PHP
+composer require salesforce-mc/fuel-sdk-php:dev-php8
+```
+
+For a development checkout of this repository, install runtime and test dependencies with:
+
+```bash
+composer install
+```
 
 The following code is an example of a minimal composer.json file:
-<pre>
+
+```json
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rodruiz/FuelSDK-PHP"
+        }
+    ],
     "require": {
-        "salesforce-mc/fuel-sdk-php": "1.3.0"
+        "salesforce-mc/fuel-sdk-php": "dev-php8"
     }
 }
-</pre>
+```
+
+## Running tests ##
+
+The test suite uses PHPUnit 12, requires PHP 8.3 or later, and contains two kinds of tests:
+
+- Credential-free unit tests, which run on every development checkout.
+- Integration tests, which make live requests to a Salesforce Marketing Cloud test account.
+
+From the repository root, run the complete configured suite with:
+
+```bash
+vendor/bin/phpunit -c tests/phpunit.xml
+```
+
+Without a `config.php` file, the credential-free tests run and the integration tests are skipped with an explanatory message. To run only the credential-free tests:
+
+```bash
+vendor/bin/phpunit --bootstrap tests/UnitBootstrap.php tests/CacheServiceTest.php
+```
+
+To run the live integration tests, copy the configuration template and replace every placeholder with values for a dedicated Marketing Cloud test account:
+
+```bash
+cp config.php.template config.php
+vendor/bin/phpunit -c tests/phpunit.xml
+```
+
+The integration tests create, update, and delete Marketing Cloud resources. Do not point them at a production account. The generated `config.php` is ignored by Git and must never be committed because it contains credentials.
+
+Useful PHPUnit commands include:
+
+```bash
+# List all discovered tests without executing them
+vendor/bin/phpunit -c tests/phpunit.xml --list-tests
+
+# Stop after the first error
+vendor/bin/phpunit -c tests/phpunit.xml --stop-on-error
+
+# Display all warnings, deprecations, and skipped-test details
+vendor/bin/phpunit -c tests/phpunit.xml --display-all-issues
+```
+
+## Code style ##
+
+PHP source, tests, and samples follow PSR-12 and are formatted with PHP-CS-Fixer. Apply formatting with:
+
+```bash
+composer format
+```
+
+Check formatting without changing files—suitable for CI—with:
+
+```bash
+composer format:check
+```
+
+Run all local quality checks with:
+
+```bash
+composer check
+```
+
+The rules are defined in `.php-cs-fixer.dist.php`. Please run the formatter and checks before submitting changes.
 
 ## Getting Started ##
 Edit config.php so you can input the ClientID and ClientSecret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
@@ -140,7 +247,7 @@ All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with
 Get the config.php.template file (under vendor/salesforce-mc/ using composer), rename it to config.php and update clientId & clientSecret.  
 Most importantly, put it in your project's root directory where composer.json file exists.  
 
-Add composer's auto generated autoload.php file, change the path according to your directory structure:
+Load Composer's generated autoloader, adjusting the path for your application structure:
 > require \_\_DIR\_\_ . '/../vendor/autoload.php'; 
 
 Add use statement to reference the FuelSdk namespace:
@@ -246,20 +353,20 @@ Find more sample files that illustrate using all of the available functions for 
 
 Sample List:
 
- - [BounceEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-bounceevent.php)
- - [Campaign](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-campaign.php)
- - [ClickEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-clickevent.php)
- - [ContentArea](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-contentarea.php)
- - [DataExtension](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-dataextension.php)
- - [DataExtractActivity](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-data-extract-activity.php)
- - [Email](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-email.php)
- - [Folder](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-folder.php)
- - [List](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-list.php)
- - [List > Subscriber](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-list.subscriber.php)
- - [OpenEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-openevent.php)
- - [ResultMessage](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-resultmessage.php)
- - [SentEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-sentevent.php)
- - [Subscriber](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-subscriber.php)
- - [TriggeredSend](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsend.php)
- - [TriggeredSendSummary](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsendsummary.php)
- - [UnsubEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-unsubevent.php)
+ - [BounceEvent](objsamples/sample-bounceevent.php)
+ - [Campaign](objsamples/sample-campaign.php)
+ - [ClickEvent](objsamples/sample-clickevent.php)
+ - [ContentArea](objsamples/sample-contentarea.php)
+ - [DataExtension](objsamples/sample-dataextension.php)
+ - [DataExtractActivity](objsamples/sample-data-extract-activity.php)
+ - [Email](objsamples/sample-email.php)
+ - [Folder](objsamples/sample-folder.php)
+ - [List](objsamples/sample-list.php)
+ - [List > Subscriber](objsamples/sample-list.subscriber.php)
+ - [OpenEvent](objsamples/sample-openevent.php)
+ - [ResultMessage](objsamples/sample-resultmessage.php)
+ - [SentEvent](objsamples/sample-sentevent.php)
+ - [Subscriber](objsamples/sample-subscriber.php)
+ - [TriggeredSend](objsamples/sample-triggeredsend.php)
+ - [TriggeredSendSummary](objsamples/sample-triggeredsendsummary.php)
+ - [UnsubEvent](objsamples/sample-unsubevent.php)

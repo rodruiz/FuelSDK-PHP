@@ -1,4 +1,5 @@
 <?php
+
 namespace FuelSdk\Test;
 
 use FuelSdk\ET_Client;
@@ -11,9 +12,10 @@ use PHPUnit\Framework\TestCase;
 final class UserTest extends TestCase
 {
     private $client;
-    
-    function __construct()
+
+    protected function setUp(): void
     {
+        requireMarketingCloudConfig($this);
         $this->client = new ET_Client(true);
     }
 
@@ -22,7 +24,7 @@ final class UserTest extends TestCase
     {
         $result = $this->createUser();
         $this->user = $result->results[0];
-        $this->assertEquals($result->status, TRUE);
+        $this->assertEquals($result->status, true);
         return $result->results[0]->Object;
     }
     /**
@@ -30,12 +32,12 @@ final class UserTest extends TestCase
     */
     public function testCanGetUser($user)
     {
-        
+
         $getuser = $this->getUser($user->ID);
         //make sure the get was successful
-        $this->assertEquals($getuser->status, TRUE);
+        $this->assertEquals($getuser->status, true);
         //compare the Email of the user
-        $this->assertEquals($getuser->results[0]->UserID == $user->UserID, TRUE);
+        $this->assertEquals($getuser->results[0]->UserID == $user->UserID, true);
         return $getuser->results[0];
     }
 
@@ -45,68 +47,67 @@ final class UserTest extends TestCase
     public function testCanUpdateUser($user)
     {
         //update just the name of the user
-        $updatedUser = $this->updateUser($user,"test@example.com");
+        $updatedUser = $this->updateUser($user, 'test@example.com');
         //fetch the user again after update
         $getuser = $this->getUser($user->ID, true);
         //make sure the get was successful
-        $this->assertEquals($getuser->status, TRUE);
+        $this->assertEquals($getuser->status, true);
         //compare the updated Email property
-        $this->assertEquals($getuser->results[0]->Email == "test@example.com", TRUE);
+        $this->assertEquals($getuser->results[0]->Email == 'test@example.com', true);
         $this->disableUser($getuser->results[0]);
-        
+
     }
 
-   
+
 
     public function getUser($id, $permission = false)
     {
         $user = new ET_User();
         $auth = $this->client;
         $user->authStub = $auth;
-        
-        $user->filter= array("Property"=>"ID", "SimpleOperator"=>"equals","Value"=>$id);
+
+        $user->filter = ['Property' => 'ID', 'SimpleOperator' => 'equals','Value' => $id];
         $result = $user->get();
 
         return $result;
     }
 
-    public function createUser($name = "")
+    public function createUser($name = '')
     {
         $user = new ET_User();
         $auth = $this->client;
 
         $user->authStub = $auth;
-        if($name == "")
-        {
-            $name = "TestUser".uniqid();
+        if ($name == '') {
+            $name = 'TestUser' . uniqid();
         }
-        $user->props["Name"] = $name;
-        $user->props["UserID"] = $name;
-        $user->props["Password"] = "23789hsjshkjs%%*";
-        $user->props["Email"]=$name."@outlook.com";
-        $user->props["ActiveFlag"] = "true";
-        $user->props["IsAPIUser"] = "true";
-        $user->props["IsLocked"] = "true";
-        $user->props["MustChangePassword"] = "true";
-        $user->props["Client"] = array("ID" => "10766790");
-        $user->props["Delete"] = 0;
-        $user->props["SsoIdentities"] = array("SsoIdentity" => array("Active" => "true","FederatedID" => $name));
-        $user->props["DefaultBusinessUnit"] = "10766790";
+        $user->props['Name'] = $name;
+        $user->props['UserID'] = $name;
+        $user->props['Password'] = '23789hsjshkjs%%*';
+        $user->props['Email'] = $name . '@outlook.com';
+        $user->props['ActiveFlag'] = 'true';
+        $user->props['IsAPIUser'] = 'true';
+        $user->props['IsLocked'] = 'true';
+        $user->props['MustChangePassword'] = 'true';
+        $user->props['Client'] = ['ID' => '10766790'];
+        $user->props['Delete'] = 0;
+        $user->props['SsoIdentities'] = ['SsoIdentity' => ['Active' => 'true','FederatedID' => $name]];
+        $user->props['DefaultBusinessUnit'] = '10766790';
         return $user->post();
-        
+
     }
 
-    public function updateUser($getuser,$email)
+    public function updateUser($getuser, $email)
     {
         $user = new ET_User();
         $auth = $this->client;
         $user->authStub = $auth;
-        $user->props["Client"] = array("ID"=>10766790);
-        $user->props["ID"] = $getuser->ID;
-        $user->props["UserID"] = $getuser->UserID;
-        $user->props["Name"] = $getuser->Name;
-        $user->props["Email"] = $email;
-        $user->props["Delete"] = 0;
+        $user->props['Client'] = ['ID' => 10766790];
+        $user->props['ID'] = $getuser->ID;
+        $user->props['UserID'] = $getuser->UserID;
+        $user->props['Name'] = $getuser->Name;
+        $user->props['Email'] = $email;
+        $user->props['Delete'] = 0;
         return $user->patch();
 
     }
@@ -116,20 +117,18 @@ final class UserTest extends TestCase
         $user = new ET_User();
         $auth = $this->client;
         $user->authStub = $auth;
-        $user->props["Client"] = array("ID"=>10766790);
-        $user->props["ID"] = $getuser->ID;
-        $user->props["UserID"] = $getuser->UserID;
-        $user->props["Name"] = $getuser->Name;
-        $user->props["Email"] = $getuser->Email;
-        $user->props["Delete"] = 1;
-        $user->props["ActiveFlag"] = 0;
+        $user->props['Client'] = ['ID' => 10766790];
+        $user->props['ID'] = $getuser->ID;
+        $user->props['UserID'] = $getuser->UserID;
+        $user->props['Name'] = $getuser->Name;
+        $user->props['Email'] = $getuser->Email;
+        $user->props['Delete'] = 1;
+        $user->props['ActiveFlag'] = 0;
         return $user->patch();
 
     }
 
-   
 
-    
+
+
 }
-
-?>

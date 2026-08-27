@@ -1,4 +1,5 @@
 <?php
+
 namespace FuelSdk\Test;
 
 use FuelSdk\ET_Client;
@@ -11,18 +12,19 @@ use PHPUnit\Framework\TestCase;
 final class DataExtensionTest extends TestCase
 {
     private $client;
-    
 
-    function __construct()
+
+    protected function setUp(): void
     {
+        requireMarketingCloudConfig($this);
         $this->client = new ET_Client(true);
     }
 
     public function testCanCreateDataExtension()
     {
         $result = $this->createDataExtension();
-        $this->assertEquals($result->status, TRUE);
-        $this->assertEquals($result->results[0]->StatusMessage == "Data Extension created.", TRUE);
+        $this->assertEquals($result->status, true);
+        $this->assertEquals($result->results[0]->StatusMessage == 'Data Extension created.', true);
         return $result->results[0];
     }
 
@@ -33,21 +35,21 @@ final class DataExtensionTest extends TestCase
     {
         $getDE = $this->getDataExtension($dataextension->Object->CustomerKey);
         //make sure the get was successful
-        $this->assertEquals($getDE->status, TRUE);
+        $this->assertEquals($getDE->status, true);
         //compare the content area name
-        $this->assertEquals($getDE->results[0]->Name == $dataextension->Object->Name, TRUE);
+        $this->assertEquals($getDE->results[0]->Name == $dataextension->Object->Name, true);
         return $getDE->results[0];
     }
 
-     /**
+    /**
     * @depends testCanGetDataExtension
     */
     public function testCanUpdateDataExtension($dataextension)
     {
-        $newDEName = "Updated DE Name";
-        $updatedDE = $this->updateDataExtension($dataextension,$newDEName);
+        $newDEName = 'Updated DE Name';
+        $updatedDE = $this->updateDataExtension($dataextension, $newDEName);
         $getDE = $this->getDataExtension($dataextension->CustomerKey);
-        $this->assertEquals($getDE->results[0]->Name == $newDEName, TRUE);
+        $this->assertEquals($getDE->results[0]->Name == $newDEName, true);
         return $dataextension;
     }
 
@@ -57,7 +59,7 @@ final class DataExtensionTest extends TestCase
     public function testCanDeleteDataExtension($dataextension)
     {
         $result = $this->deleteDataExtension($dataextension);
-        $this->assertEquals($result->status, TRUE);
+        $this->assertEquals($result->status, true);
 
     }
 
@@ -65,10 +67,10 @@ final class DataExtensionTest extends TestCase
     {
         $dataextension = new ET_DataExtension();
         $dataextension->authStub = $this->client;
-        $dataextension->props = array("Name" => "SDKDataExtension".uniqid(), "Description" => "SDK Created Data Extension", "CustomerKey" => "CustKey".uniqid());
-        $dataextension->columns = array();
-        $dataextension->columns[] = array("Name" => "Key", "FieldType" => "Text", "IsPrimaryKey" => "true","MaxLength" => "100", "IsRequired" => "true");
-        $dataextension->columns[] = array("Name" => "Value", "FieldType" => "Text");
+        $dataextension->props = ['Name' => 'SDKDataExtension' . uniqid(), 'Description' => 'SDK Created Data Extension', 'CustomerKey' => 'CustKey' . uniqid()];
+        $dataextension->columns = [];
+        $dataextension->columns[] = ['Name' => 'Key', 'FieldType' => 'Text', 'IsPrimaryKey' => 'true','MaxLength' => '100', 'IsRequired' => 'true'];
+        $dataextension->columns[] = ['Name' => 'Value', 'FieldType' => 'Text'];
         return $dataextension->post();
 
     }
@@ -77,19 +79,19 @@ final class DataExtensionTest extends TestCase
     {
         $dataextension = new ET_DataExtension();
         $dataextension->authStub = $this->client;
-        $dataextension->props = array("Name","Description","CustomerKey","ObjectID");
-        $dataextension->filter= array("Property"=>"CustomerKey", "SimpleOperator"=>"equals","Value"=>$customerkey);
+        $dataextension->props = ['Name','Description','CustomerKey','ObjectID'];
+        $dataextension->filter = ['Property' => 'CustomerKey', 'SimpleOperator' => 'equals','Value' => $customerkey];
 
         return $dataextension->get();
     }
 
-   
-    public function updateDataExtension($de,$updatedName)
+
+    public function updateDataExtension($de, $updatedName)
     {
         $dataextension = new ET_DataExtension();
         $dataextension->authStub = $this->client;
-        $dataextension->props = array("CustomerKey" => $de->CustomerKey, "Name"=> $updatedName);
-        $dataextension->columns = array();
+        $dataextension->props = ['CustomerKey' => $de->CustomerKey, 'Name' => $updatedName];
+        $dataextension->columns = [];
         return $dataextension->patch();
     }
 
@@ -97,13 +99,11 @@ final class DataExtensionTest extends TestCase
     {
         $dataextension = new ET_DataExtension();
         $dataextension->authStub = $this->client;
-        $dataextension->props = array("ObjectID" => $de->ObjectID);
-       
+        $dataextension->props = ['ObjectID' => $de->ObjectID];
+
         return $dataextension->delete();
     }
 
 
 
 }
-
-?>

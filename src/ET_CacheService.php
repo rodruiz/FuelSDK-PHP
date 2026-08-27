@@ -10,7 +10,7 @@ class ET_CacheService
 
     public function __construct($clientId, $clientSecret)
     {
-        $this->_identifier = $clientId . "-" . $clientSecret;
+        $this->_identifier = $clientId . '-' . $clientSecret;
     }
 
     public function get()

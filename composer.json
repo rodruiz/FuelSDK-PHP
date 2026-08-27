@@ -1,7 +1,7 @@
 {
     "name": "salesforce-mc/fuel-sdk-php",
-    "description": "Salesforce Marketing Cloud Fuel SDK for PHP",
-    "homepage": "https://developer.salesforce.com/docs/atlas.en-us.mc-sdks.meta/mc-sdks/index-sdk.htm",
+    "description": "PHP 8-compatible community fork of the Salesforce Marketing Cloud Fuel SDK",
+    "homepage": "https://github.com/rodruiz/FuelSDK-PHP",
     "license": "MIT",
     "type": "library",
     "minimum-stability": "stable",
@@ -9,14 +9,17 @@
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "php": ">=5.6.24",
-        "robrichards/wse-php":"2.0.3",
-        "firebase/php-jwt":">=5.0.0"
+        "php": "^8.1",
+        "robrichards/wse-php": "^2.0.4",
+        "firebase/php-jwt": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit":">=5.7.20",
-        "phpdocumentor/phpdocumentor": "2.8.0",
-        "dompdf/dompdf": "0.6"
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "support": {
+        "issues": "https://github.com/rodruiz/FuelSDK-PHP/issues",
+        "source": "https://github.com/rodruiz/FuelSDK-PHP/tree/php8"
     },
     "keywords": [
         "exacttarget",
@@ -36,5 +39,20 @@
         "psr-4": {
             "FuelSdk\\Test\\": "tests/"
         }
+    },
+    "config": {
+        "platform": {
+            "php": "8.3.0"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "check": [
+            "@format:check",
+            "@test"
+        ],
+        "format": "php-cs-fixer fix --config=.php-cs-fixer.dist.php --sequential",
+        "format:check": "php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff --sequential",
+        "test": "phpunit -c tests/phpunit.xml"
     }
 }

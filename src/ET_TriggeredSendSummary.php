@@ -1,4 +1,5 @@
 <?php
+
 namespace FuelSdk;
 
 /**
@@ -6,13 +7,12 @@ namespace FuelSdk;
 */
 class ET_TriggeredSendSummary extends ET_GetSupport
 {
-	/** 
-	* Initializes a new instance of the class.
-	*/
-	function __construct()
-	{
-		$this->obj = "TriggeredSendSummary";
-	}
+    /**
+    * Initializes a new instance of the class.
+    */
+    public function __construct()
+    {
+        $this->obj = 'TriggeredSendSummary';
+    }
 
 }
-?>

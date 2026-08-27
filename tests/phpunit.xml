@@ -1,6 +1,7 @@
 <phpunit bootstrap="UnitBootstrap.php">
   <testsuites>
     <testsuite name="PHPSDK">
+        <file>CacheServiceTest.php</file>
         <file>AssetTest.php</file>
         <file>CampaignTest.php</file>
         <file>MessageTest.php</file>
@@ -28,7 +29,4 @@
         
     </testsuite>
   </testsuites>
-  <logging>
-    <log type="testdox-html" target="./testdox.html"/>
-  </logging>
 </phpunit>
