@@ -2,6 +2,7 @@
   <testsuites>
     <testsuite name="PHPSDK">
         <file>CacheServiceTest.php</file>
+        <file>ClientCompatibilityTest.php</file>
         <file>AssetTest.php</file>
         <file>CampaignTest.php</file>
         <file>MessageTest.php</file>
