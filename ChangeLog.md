@@ -2,6 +2,10 @@
 
 These changes are maintained on the fork's `php8` branch and are installable through Composer as `salesforce-mc/fuel-sdk-php:dev-php8`. The fork retains the original Composer package name and is not published as a separate Packagist package.
 
+### Fixed
+
+* Made `ET_Client::__doRequest()` compatible with the optional `uriParserClass` parameter added to `SoapClient::__doRequest()` in PHP 8.5.
+
 ### Changed
 
 * Added support for PHP 8.1 through PHP 8.4.

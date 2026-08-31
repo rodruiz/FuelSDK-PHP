@@ -552,13 +552,20 @@ class ET_Client extends SoapClient
      *
      * @param string $request Soap request xml
      * @param string $location Url as string
-     * @param string $saction Soap action name
-     * @param string $version Future use
-     * @param integer $one_way Future use
-     * @return string Soap web service request result
+     * @param string $action Soap action name
+     * @param int $version SOAP protocol version
+     * @param bool $oneWay Whether the request is one-way
+     * @param null|string $uriParserClass URI parser class used by PHP 8.5 and later
+     * @return null|string Soap web service request result
      */
-    public function __doRequest(string $request, string $location, string $saction, int $version, bool $one_way = false): ?string
-    {
+    public function __doRequest(
+        string $request,
+        string $location,
+        string $action,
+        int $version,
+        bool $oneWay = false,
+        ?string $uriParserClass = null,
+    ): ?string {
         $doc = new DOMDocument();
         $doc->loadXML($request);
 
@@ -578,14 +585,14 @@ class ET_Client extends SoapClient
             error_log(str_replace($this->getInternalAuthToken($this->tenantKey), 'REMOVED', $content));
         }
 
-        if ('Retrieve' === $saction && false !== strpos($content, '<ns1:ObjectType>EmailSendDefinition</ns1:ObjectType>')) {
+        if ('Retrieve' === $action && false !== strpos($content, '<ns1:ObjectType>EmailSendDefinition</ns1:ObjectType>')) {
             $content = str_replace('<ns1:Properties>DeliveryProfile.CusomterKey</ns1:Properties>', '', $content);
             $content = str_replace('<ns1:Properties>DeliveryProfile.HeaderContentArea.ID</ns1:Properties>', '', $content);
             $content = str_replace('<ns1:Properties>DeliveryProfile.FooterContentArea.ID</ns1:Properties>', '', $content);
             $content = str_replace('<ns1:Properties>SendWindowCloses</ns1:Properties>', '', $content);
         }
 
-        $headers = ['Content-Type: text/xml','SOAPAction: ' . $saction, 'User-Agent: ' . ET_Util::getSDKVersion()];
+        $headers = ['Content-Type: text/xml','SOAPAction: ' . $action, 'User-Agent: ' . ET_Util::getSDKVersion()];
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $location);
@@ -610,7 +617,7 @@ class ET_Client extends SoapClient
         $this->lastHTTPCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return $output;
+        return $output === false ? null : $output;
     }
     /**
      * Add OAuth token to the header of the soap request
